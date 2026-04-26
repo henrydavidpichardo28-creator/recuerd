@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Para mis ojitos lindos</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Quicksand:wght@500&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <style>
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(-45deg, #ff9a9e, #fad0c4, #ffecd2, #fcb69f);
+            background-size: 400% 400%;
+            animation: gradient 10s ease infinite;
+            font-family: 'Quicksand', sans-serif;
+            overflow: hidden;
+            touch-action: manipulation;
+        }
+
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .container {
+            z-index: 10;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 40px 20px;
+            border-radius: 30px;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+            width: 85%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .heart-main {
+            font-size: 70px;
+            display: inline-block;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.15); }
+        }
+
+        h1 {
+            font-family: 'Dancing Script', cursive;
+            font-size: 2.5rem;
+            color: #d63384;
+            margin: 15px 0;
+        }
+
+        .subtexto {
+            font-size: 1.2rem;
+            color: #555;
+            margin-top: 10px;
+            margin-bottom: 25px;
+            display: none;
+            line-height: 1.4;
+        }
+
+        .btn-magico {
+            background: #d63384;
+            color: white;
+            border: none;
+            padding: 18px 35px;
+            border-radius: 50px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 10px 20px rgba(214, 51, 132, 0.3);
+            -webkit-appearance: none;
+        }
+
+        .floating-element {
+            position: absolute;
+            pointer-events: none;
+            z-index: 1;
+            animation: floatUp var(--d) linear forwards;
+            opacity: 0;
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(110vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.8; }
+            100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="heart-main">❤️</div>
+        <h1 id="main-text">Tengo algo que decirte...</h1>
+        <p id="sub-text" class="subtexto"></p>
+        <button id="btn" class="btn-magico">Abrir Mensaje</button>
+    </div>
+
+    <audio id="musica" preload="auto" playsinline>
+        <source src="https://vocaroo.com/media/download/11FO1oab7paG" type="audio/mpeg">
+    </audio>
+
+    <script>
+        const btn = document.getElementById('btn');
+        const audio = document.getElementById('musica');
+
+        function abrir(e) {
+            if (e) e.preventDefault();
+            
+            // Reproducir música (Esto desbloquea el audio en iPhone)
+            audio.play().then(() => {
+                iniciarTodo();
+            }).catch(() => {
+                audio.load();
+                audio.play();
+                iniciarTodo();
+            });
+        }
+
+        // Compatibilidad total con toques en móviles
+        btn.addEventListener('click', abrir);
+        btn.addEventListener('touchstart', abrir);
+
+        function iniciarTodo() {
+            const h1 = document.getElementById('main-text');
+            const sub = document.getElementById('sub-text');
+            btn.style.display = "none";
+            
+            h1.innerHTML = "¡Te extraño!";
+            h1.style.color = "#ff1493";
+            
+            sub.style.display = "block";
+            sub.innerHTML = "Espero verte pronto, y a tus ojitos lindos. 💖";
+
+            // Confeti festivo
+            var end = Date.now() + (10 * 1000);
+            (function frame() {
+                confetti({ particleCount: 2, angle: 60, spread: 55, origin: { x: 0 }, colors: ['#ff69b4', '#ffffff'] });
+                confetti({ particleCount: 2, angle: 120, spread: 55, origin: { x: 1 }, colors: ['#ff69b4', '#ffffff'] });
+                if (Date.now() < end) requestAnimationFrame(frame);
+            }());
+
+            // Lluvia de corazones
+            setInterval(createHeart, 300);
+        }
+
+        function createHeart() {
+            const el = document.createElement('div');
+            el.className = 'floating-element';
+            el.innerHTML = ["❤️", "💖", "✨", "💕"][Math.floor(Math.random() * 4)];
+            el.style.left = Math.random() * 100 + "vw";
+            el.style.fontSize = (Math.random() * 20 + 15) + "px";
+            el.style.setProperty('--d', (Math.random() * 3 + 4) + "s");
+            document.body.appendChild(el);
+            setTimeout(() => el.remove(), 5000);
+        }
+    </script>
+</body>
+</html>
